@@ -267,7 +267,9 @@ export default function DashboardPage() {
         <OnboardingModal
           userId={user.id}
           initialName={profile?.name || user.user_metadata?.full_name || ''}
-          onComplete={() => loadProfile(user.id)}
+          onComplete={async () => {
+            await loadProfile(user.id)
+          }}
         />
       )}
 

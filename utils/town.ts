@@ -131,8 +131,10 @@ export function buildWalkable(placed: LandItem[], catalog: Record<string, TownIt
     const it = catalog[String(l.item_id)]
     if (!it || l.grid_x === null || l.grid_y === null) continue
     const { w, d } = footprint(it, l.rotation)
-    for (let cx = l.grid_x; cx < l.grid_x + w; cx++) {
-      for (let cy = l.grid_y; cy < l.grid_y + d; cy++) {
+    const gx: number = l.grid_x
+    const gy: number = l.grid_y
+    for (let cx = gx; cx < gx + w; cx++) {
+      for (let cy = gy; cy < gy + d; cy++) {
         const i = cy * WORLD_SIZE + cx
         if (i < 0 || i >= grid.length) continue
         if (it.placement === 'ground') roads[i] = 1
