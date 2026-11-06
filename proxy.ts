@@ -32,9 +32,16 @@ export async function proxy(request: NextRequest) {
     } = await supabase.auth.getUser()
 
     const path = request.nextUrl.pathname
-    const isPublic = path.startsWith('/login') || path.startsWith('/auth')
 
-    // Belum login -> paksa ke /login (kecuali /login dan /auth/callback)
+    // Halaman/endpoint yang boleh diakses tanpa login.
+    // /api/cron dan /api/whatsapp/webhook dipanggil oleh sistem (pg_cron, Fonnte) dan diamankan dengan rahasia sendiri.
+    const isPublic =
+        path.startsWith('/login') ||
+        path.startsWith('/auth') ||
+        path.startsWith('/api/cron') ||
+        path.startsWith('/api/whatsapp/webhook')
+
+    // Belum login -> paksa ke /login
     if (!user && !isPublic) {
         const url = request.nextUrl.clone()
         url.pathname = '/login'

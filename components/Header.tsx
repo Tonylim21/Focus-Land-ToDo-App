@@ -2,12 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import { Sparkles, Bell } from 'lucide-react'
+import NotificationBell from '@/components/NotificationBell'
 
 interface HeaderProps {
   userName: string
+  userId?: string
+  timezone?: string
+  refreshKey?: number
 }
 
-export default function Header({ userName }: HeaderProps) {
+export default function Header({ userName, userId, timezone = 'Asia/Jakarta', refreshKey = 0 }: HeaderProps) {
   const [quote, setQuote] = useState({
     text: 'Konsistensi adalah kunci keberhasilan kecil setiap hari.',
     author: 'FocusLand',
@@ -23,7 +27,7 @@ export default function Header({ userName }: HeaderProps) {
   }, [])
 
   return (
-    <header className="w-full glass-card rounded-3xl p-6 mb-5 flex items-center justify-between gap-4">
+    <header className="relative z-30 w-full glass-card rounded-3xl p-6 mb-5 flex items-center justify-between gap-4">
       <div className="space-y-1 min-w-0">
         <h2 className="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">
           Selamat datang,{' '}
@@ -37,9 +41,13 @@ export default function Header({ userName }: HeaderProps) {
         </div>
       </div>
 
-      <div className="w-10 h-10 shrink-0 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-600">
-        <Bell className="w-5 h-5" />
-      </div>
+      {userId ? (
+        <NotificationBell userId={userId} timezone={timezone} refreshKey={refreshKey} />
+      ) : (
+        <div className="w-10 h-10 shrink-0 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-600">
+          <Bell className="w-5 h-5" />
+        </div>
+      )}
     </header>
   )
 }

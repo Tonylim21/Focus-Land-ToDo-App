@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Check, Clock, Plus, Trash2 } from 'lucide-react'
 import ProgressBar from '@/components/ProgressBar'
 import PriorityPicker from '@/components/PriorityPicker'
+import ConfirmDialog from '@/components/ConfirmDialog'
 import type { Priority, Subtask, Task } from '@/types'
 import { PRIORITY_META } from '@/utils/points'
 import { fromInputDate } from '@/utils/date'
@@ -35,6 +36,7 @@ export default function TaskCard({
   const [title, setTitle] = useState('')
   const [priority, setPriority] = useState<Priority>('medium')
   const [adding, setAdding] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
 
   const subs = [...task.subtasks].sort((a, b) => a.created_at.localeCompare(b.created_at))
   const done = subs.filter((s) => s.is_done).length
@@ -50,9 +52,7 @@ export default function TaskCard({
     setAdding(false)
   }
 
-  const handleDeleteTask = () => {
-    if (window.confirm('Hapus tugas ini beserta semua subtask-nya?')) onDeleteTask(task)
-  }
+  const handleDeleteTask = () => setConfirmOpen(true)
 
   return (
     <li className={`rounded-2xl border p-5 space-y-4 list-none ${late ? 'bg-rose-50/60 border-rose-200' : 'bg-white/70 border-white/60'}`}>
@@ -123,6 +123,21 @@ export default function TaskCard({
           </button>
         </form>
       )}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Hapus tugas ini?"
+        confirmLabel="Hapus"
+        danger
+        onConfirm={() => {
+          setConfirmOpen(false)
+          onDeleteTask(task)
+        }}
+        onCancel={() => setConfirmOpen(false)}
+      >
+        <strong className="text-slate-800">{task.title}</strong> beserta semua subtask-nya akan dihapus.
+      </ConfirmDialog>
     </li>
   )
 }
+

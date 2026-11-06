@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { normalizePhone } from '@/utils/phone'
 
 interface OnboardingModalProps {
   userId: string
@@ -23,11 +24,18 @@ export default function OnboardingModal({ userId, initialName = '', onComplete }
     setLoading(true)
     setErrorMsg('')
 
+    const normalized = normalizePhone(phone)
+    if (!normalized) {
+      setErrorMsg('Nomor WhatsApp tidak valid. Contoh: 081234567890')
+      setLoading(false)
+      return
+    }
+
     // upsert: tetap berhasil walau trigger belum sempat membuat baris profil
     const { error } = await supabase.from('profiles').upsert({
       id: userId,
       name,
-      phone_number: phone,
+      phone_number: normalized,
       timezone,
     })
 

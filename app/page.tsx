@@ -8,6 +8,7 @@ import { createClient } from '@/utils/supabase/client'
 import Sidebar from '@/components/Sidebar'
 import Header from '@/components/Header'
 import StatCards from '@/components/StatCards'
+import TownPreviewCard from '@/components/TownPreviewCard'
 import QuickAdd from '@/components/QuickAdd'
 import OnboardingModal from '@/components/OnboardingModal'
 import Calendar from '@/components/Calendar'
@@ -38,6 +39,7 @@ export default function DashboardPage() {
   const [showAdd, setShowAdd] = useState(false)
   const [errMsg, setErrMsg] = useState('')
 
+  const [version, setVersion] = useState(0) // naik setiap data berubah, dipakai lonceng notifikasi
   const dayReq = useRef(0) // penanda permintaan terbaru, supaya respons lama tidak menimpa data baru
   const tz = profile?.timezone || DEFAULT_TZ
 
@@ -160,6 +162,7 @@ export default function DashboardPage() {
   const progress = allSubs.length === 0 ? 0 : Math.round((doneSubs / allSubs.length) * 100)
 
   const refreshAll = () => {
+    setVersion((v) => v + 1)
     fetchDay(user.id, selectedDate)
     fetchOverdue(user.id, todayStr)
     fetchStats(user.id)
@@ -271,8 +274,11 @@ export default function DashboardPage() {
       <Sidebar />
 
       <main className="flex-1 p-4 md:p-6 pb-24 md:pb-6 max-w-7xl mx-auto w-full overflow-y-auto">
-        <Header userName={profile?.name || user.user_metadata?.full_name || 'Pengguna'} />
-        <StatCards points={profile?.points ?? 0} showPoints={completedTasks >= 1} completedTasks={completedTasks} progress={progress} />
+        <Header userName={profile?.name || user.user_metadata?.full_name || 'Pengguna'} userId={user.id} timezone={tz} refreshKey={version} />
+        <div className="grid gap-4 lg:grid-cols-[1.6fr_1fr] mb-6">
+          <TownPreviewCard userId={user.id} points={profile?.points ?? 0} showPoints={completedTasks >= 1} />
+          <StatCards completedTasks={completedTasks} progress={progress} />
+        </div>
         <QuickAdd today={today} onAdd={quickAdd} />
 
         {errMsg && (
