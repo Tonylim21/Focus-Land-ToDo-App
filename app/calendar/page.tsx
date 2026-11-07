@@ -10,7 +10,6 @@ import type { Priority, Subtask, Task } from '@/types'
 import { addDays, formatLongDate, fromInputDate, toInputDate } from '@/utils/date'
 import { PRIORITY_META } from '@/utils/points'
 import { DEFAULT_TZ, TASK_SELECT, isOverdue, todayStrInTz } from '@/utils/tasks'
-export const dynamic = 'force-dynamic'
 
 const WEEKDAYS = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']
 const RANK: Record<Priority, number> = { low: 1, medium: 2, high: 3 }
